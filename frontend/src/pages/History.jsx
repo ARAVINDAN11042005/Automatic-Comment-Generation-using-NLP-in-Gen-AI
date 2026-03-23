@@ -265,15 +265,7 @@ function History() {
                                         <h4 style={{ fontSize: '0.95rem' }}>ALSI-Transformer</h4>
                                         <span className="model-badge">Baseline</span>
                                     </div>
-                                    <div className="comment-text" style={{ padding: '10px' }}>
-                                        <SyntaxHighlighter
-                                            language={selectedItem.language}
-                                            style={vscDarkPlus}
-                                            customStyle={{ background: 'transparent', margin: 0, padding: 0, fontSize: '0.85rem' }}
-                                        >
-                                            {selectedItem.alsi_comment}
-                                        </SyntaxHighlighter>
-                                    </div>
+
                                     <div className="metrics-row">
                                         <div className="metric-chip">
                                             <span className="metric-label">Score</span>

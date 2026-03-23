@@ -209,15 +209,7 @@ function Generate() {
                                     <h3>ALSI-Transformer</h3>
                                     <span className="model-badge">Baseline</span>
                                 </div>
-                                <div className="comment-text" style={{ padding: '10px' }}>
-                                    <SyntaxHighlighter
-                                        language={language}
-                                        style={vscDarkPlus}
-                                        customStyle={{ background: 'transparent', margin: 0, padding: 0, fontSize: '0.85rem' }}
-                                    >
-                                        {result.alsi.comment}
-                                    </SyntaxHighlighter>
-                                </div>
+
                                 <div className="metrics-row">
                                     <div className="metric-chip">
                                         <span className="metric-label">Confidence</span>
