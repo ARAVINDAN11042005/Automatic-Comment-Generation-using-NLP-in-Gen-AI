@@ -229,7 +229,31 @@ function History() {
                                 </div>
                             </div>
 
-                            <div className="results-grid" style={{ marginTop: '0' }}>
+                            <div className="results-stacked" style={{ marginTop: '0' }}>
+                                {/* ALSI Model Result (Compact Top Bar) */}
+                                <div className="result-panel alsi compact">
+                                    <div className="panel-header">
+                                        <h4 style={{ fontSize: '0.95rem' }}>ALSI-Transformer</h4>
+                                        <span className="model-badge">Baseline</span>
+                                    </div>
+
+                                    <div className="metrics-row">
+                                        <div className="metric-chip">
+                                            <span className="metric-label">Score</span>
+                                            <span className="metric-value">{(selectedItem.alsi_score * 100).toFixed(1)}%</span>
+                                        </div>
+                                        <div className="metric-chip">
+                                            <span className="metric-label">BLEU</span>
+                                            <span className="metric-value">{(selectedItem.alsi_bleu * 100).toFixed(1)}%</span>
+                                        </div>
+                                        <div className="metric-chip">
+                                            <span className="metric-label">F1</span>
+                                            <span className="metric-value">{(selectedItem.alsi_f1 * 100).toFixed(1)}%</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* NLP Model Result (Full Width) */}
                                 <div className="result-panel nlp">
                                     <div className="panel-header">
                                         <h4 style={{ fontSize: '0.95rem' }}>NLP Model</h4>
@@ -256,28 +280,6 @@ function History() {
                                         <div className="metric-chip">
                                             <span className="metric-label">F1</span>
                                             <span className="metric-value">{(selectedItem.nlp_f1 * 100).toFixed(1)}%</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="result-panel alsi">
-                                    <div className="panel-header">
-                                        <h4 style={{ fontSize: '0.95rem' }}>ALSI-Transformer</h4>
-                                        <span className="model-badge">Baseline</span>
-                                    </div>
-
-                                    <div className="metrics-row">
-                                        <div className="metric-chip">
-                                            <span className="metric-label">Score</span>
-                                            <span className="metric-value">{(selectedItem.alsi_score * 100).toFixed(1)}%</span>
-                                        </div>
-                                        <div className="metric-chip">
-                                            <span className="metric-label">BLEU</span>
-                                            <span className="metric-value">{(selectedItem.alsi_bleu * 100).toFixed(1)}%</span>
-                                        </div>
-                                        <div className="metric-chip">
-                                            <span className="metric-label">F1</span>
-                                            <span className="metric-value">{(selectedItem.alsi_f1 * 100).toFixed(1)}%</span>
                                         </div>
                                     </div>
                                 </div>

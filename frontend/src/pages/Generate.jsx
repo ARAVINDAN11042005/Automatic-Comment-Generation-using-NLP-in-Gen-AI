@@ -153,13 +153,42 @@ function Generate() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5 }}
                     >
-                        <div className="results-grid">
-                            {/* NLP Model Result */}
+                        <div className="results-stacked">
+                            {/* ALSI Model Result (Compact Top Bar) */}
+                            <motion.div
+                                className="result-panel alsi compact"
+                                initial={{ opacity: 0, y: -20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.2 }}
+                            >
+                                <div className="panel-header">
+                                    <HiCode style={{ color: 'var(--accent-warning)', fontSize: '1.3rem' }} />
+                                    <h3>ALSI-Transformer</h3>
+                                    <span className="model-badge">Baseline</span>
+                                </div>
+
+                                <div className="metrics-row">
+                                    <div className="metric-chip">
+                                        <span className="metric-label">Confidence</span>
+                                        <span className="metric-value">{(result.alsi.confidence * 100).toFixed(1)}%</span>
+                                    </div>
+                                    <div className="metric-chip">
+                                        <span className="metric-label">BLEU</span>
+                                        <span className="metric-value">{(result.alsi.metrics.bleu * 100).toFixed(1)}%</span>
+                                    </div>
+                                    <div className="metric-chip">
+                                        <span className="metric-label">F1</span>
+                                        <span className="metric-value">{(result.alsi.metrics.f1 * 100).toFixed(1)}%</span>
+                                    </div>
+                                </div>
+                            </motion.div>
+
+                            {/* NLP Model Result (Full Width) */}
                             <motion.div
                                 className="result-panel nlp"
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.2 }}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.3 }}
                             >
                                 <div className="panel-header">
                                     <HiCode style={{ color: 'var(--accent-primary)', fontSize: '1.3rem' }} />
@@ -193,41 +222,6 @@ function Generate() {
                                     <div
                                         className="progress-fill nlp"
                                         style={{ width: `${result.nlp.confidence * 100}%` }}
-                                    />
-                                </div>
-                            </motion.div>
-
-                            {/* ALSI Model Result */}
-                            <motion.div
-                                className="result-panel alsi"
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.3 }}
-                            >
-                                <div className="panel-header">
-                                    <HiCode style={{ color: 'var(--accent-warning)', fontSize: '1.3rem' }} />
-                                    <h3>ALSI-Transformer</h3>
-                                    <span className="model-badge">Baseline</span>
-                                </div>
-
-                                <div className="metrics-row">
-                                    <div className="metric-chip">
-                                        <span className="metric-label">Confidence</span>
-                                        <span className="metric-value">{(result.alsi.confidence * 100).toFixed(1)}%</span>
-                                    </div>
-                                    <div className="metric-chip">
-                                        <span className="metric-label">BLEU</span>
-                                        <span className="metric-value">{(result.alsi.metrics.bleu * 100).toFixed(1)}%</span>
-                                    </div>
-                                    <div className="metric-chip">
-                                        <span className="metric-label">F1</span>
-                                        <span className="metric-value">{(result.alsi.metrics.f1 * 100).toFixed(1)}%</span>
-                                    </div>
-                                </div>
-                                <div className="progress-bar" style={{ marginTop: '16px' }}>
-                                    <div
-                                        className="progress-fill alsi"
-                                        style={{ width: `${result.alsi.confidence * 100}%` }}
                                     />
                                 </div>
                             </motion.div>
