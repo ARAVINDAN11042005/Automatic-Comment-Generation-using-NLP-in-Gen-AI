@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HiClock, HiTrash, HiEye, HiX, HiRefresh } from 'react-icons/hi';
 import axios from 'axios';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 const API_URL = 'http://localhost:5000/api';
 
@@ -216,8 +218,14 @@ function History() {
                                 <h4 style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '8px' }}>
                                     Code Input ({selectedItem.language})
                                 </h4>
-                                <div className="comment-text" style={{ fontSize: '0.82rem' }}>
-                                    {selectedItem.code_input}
+                                <div className="comment-text" style={{ padding: '8px' }}>
+                                    <SyntaxHighlighter
+                                        language={selectedItem.language}
+                                        style={vscDarkPlus}
+                                        customStyle={{ background: 'transparent', margin: 0, padding: 0, fontSize: '0.82rem' }}
+                                    >
+                                        {selectedItem.code_input}
+                                    </SyntaxHighlighter>
                                 </div>
                             </div>
 
@@ -227,7 +235,15 @@ function History() {
                                         <h4 style={{ fontSize: '0.95rem' }}>NLP Model</h4>
                                         <span className="model-badge">Proposed</span>
                                     </div>
-                                    <div className="comment-text">{selectedItem.nlp_comment}</div>
+                                    <div className="comment-text" style={{ padding: '10px' }}>
+                                        <SyntaxHighlighter
+                                            language={selectedItem.language}
+                                            style={vscDarkPlus}
+                                            customStyle={{ background: 'transparent', margin: 0, padding: 0, fontSize: '0.85rem' }}
+                                        >
+                                            {selectedItem.nlp_comment}
+                                        </SyntaxHighlighter>
+                                    </div>
                                     <div className="metrics-row">
                                         <div className="metric-chip">
                                             <span className="metric-label">Score</span>
@@ -249,7 +265,15 @@ function History() {
                                         <h4 style={{ fontSize: '0.95rem' }}>ALSI-Transformer</h4>
                                         <span className="model-badge">Baseline</span>
                                     </div>
-                                    <div className="comment-text">{selectedItem.alsi_comment}</div>
+                                    <div className="comment-text" style={{ padding: '10px' }}>
+                                        <SyntaxHighlighter
+                                            language={selectedItem.language}
+                                            style={vscDarkPlus}
+                                            customStyle={{ background: 'transparent', margin: 0, padding: 0, fontSize: '0.85rem' }}
+                                        >
+                                            {selectedItem.alsi_comment}
+                                        </SyntaxHighlighter>
+                                    </div>
                                     <div className="metrics-row">
                                         <div className="metric-chip">
                                             <span className="metric-label">Score</span>

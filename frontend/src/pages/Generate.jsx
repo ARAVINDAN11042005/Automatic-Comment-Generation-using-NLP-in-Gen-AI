@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HiCode, HiLightningBolt, HiChevronDown } from 'react-icons/hi';
 import axios from 'axios';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 const API_URL = 'http://localhost:5000/api';
 
@@ -164,7 +166,15 @@ function Generate() {
                                     <h3>NLP Model</h3>
                                     <span className="model-badge">Proposed</span>
                                 </div>
-                                <div className="comment-text">{result.nlp.comment}</div>
+                                <div className="comment-text" style={{ padding: '10px' }}>
+                                    <SyntaxHighlighter
+                                        language={language}
+                                        style={vscDarkPlus}
+                                        customStyle={{ background: 'transparent', margin: 0, padding: 0, fontSize: '0.85rem' }}
+                                    >
+                                        {result.nlp.comment}
+                                    </SyntaxHighlighter>
+                                </div>
                                 <div className="metrics-row">
                                     <div className="metric-chip">
                                         <span className="metric-label">Confidence</span>
@@ -199,7 +209,15 @@ function Generate() {
                                     <h3>ALSI-Transformer</h3>
                                     <span className="model-badge">Baseline</span>
                                 </div>
-                                <div className="comment-text">{result.alsi.comment}</div>
+                                <div className="comment-text" style={{ padding: '10px' }}>
+                                    <SyntaxHighlighter
+                                        language={language}
+                                        style={vscDarkPlus}
+                                        customStyle={{ background: 'transparent', margin: 0, padding: 0, fontSize: '0.85rem' }}
+                                    >
+                                        {result.alsi.comment}
+                                    </SyntaxHighlighter>
+                                </div>
                                 <div className="metrics-row">
                                     <div className="metric-chip">
                                         <span className="metric-label">Confidence</span>
