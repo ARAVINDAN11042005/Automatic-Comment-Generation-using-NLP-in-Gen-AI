@@ -1,10 +1,11 @@
 import { NavLink } from 'react-router-dom';
-import { HiHome, HiCode, HiChartBar, HiClock, HiInformationCircle } from 'react-icons/hi';
+import { HiHome, HiCode, HiChartBar, HiClock, HiInformationCircle, HiSparkles } from 'react-icons/hi';
 
 const navItems = [
     { path: '/', label: 'Dashboard', icon: <HiHome /> },
     { path: '/generate', label: 'Generate Comments', icon: <HiCode /> },
     { path: '/compare', label: 'Model Comparison', icon: <HiChartBar /> },
+    { path: '/chatbot', label: 'Code Fixer Chatbot', icon: <HiSparkles /> },
     { path: '/history', label: 'History', icon: <HiClock /> },
     { path: '/about', label: 'About Research', icon: <HiInformationCircle /> },
 ];

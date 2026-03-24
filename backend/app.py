@@ -3,6 +3,7 @@ from flask_cors import CORS
 from database import init_db, save_submission, get_all_submissions, get_submission_by_id, delete_submission, get_aggregate_metrics
 from models.nlp_model import NLPCommentGenerator
 from models.alsi_model import ALSICommentGenerator
+from models.chatbot_model import CodeFixerChatbot
 from utils.metrics import generate_simulated_metrics, get_overall_comparison
 
 app = Flask(__name__)
@@ -11,6 +12,7 @@ CORS(app)
 # Initialize models
 nlp_model = NLPCommentGenerator()
 alsi_model = ALSICommentGenerator()
+chatbot_model = CodeFixerChatbot()
 
 # Initialize database
 init_db()
@@ -121,6 +123,20 @@ def compare_models():
         'alsi': {**alsi_result, 'metrics': metrics['alsi']},
         'overall_comparison': get_overall_comparison()
     })
+
+@app.route('/api/fix-code', methods=['POST'])
+def fix_code_endpoint():
+    """Fix common coding mistakes for the Chatbot."""
+    data = request.get_json()
+    
+    if not data or 'code' not in data:
+        return jsonify({'error': 'Code input is required'}), 400
+    
+    code = data['code']
+    language = data.get('language', 'python')
+    
+    result = chatbot_model.fix_code(code, language)
+    return jsonify(result)
 
 @app.route('/api/model-info', methods=['GET'])
 def model_info():
