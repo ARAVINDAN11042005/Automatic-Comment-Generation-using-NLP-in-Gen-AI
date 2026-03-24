@@ -145,12 +145,31 @@ Here is the code:
                         if "Fixed assignment '=' used instead of equality '==' in conditional." not in fixes:
                             fixes.append("Fixed assignment '=' used instead of equality '==' in conditional.")
 
-            # 5. Missing `self` in methods
+            # 5. Missing `=` assignment for simple lines like `sum 0` -> `sum = 0`
+            for i in range(len(lines)):
+                # Pattern: optional space, variable name, space, literal (number, string, list, dict)
+                if re.match(r'^\s*[a-zA-Z_]\w*\s+([\d\.\-]+|["\'].*?["\']|\[.*?\]|\{.*?\})\s*$', lines[i]):
+                    lines[i] = re.sub(r'^(\s*[a-zA-Z_]\w*)\s+([\d\.\-]+|["\'].*?["\']|\[.*?\]|\{.*?\})\s*$', r'\1 = \2', lines[i])
+                    if "Fixed missing '=' in variable assignment." not in fixes:
+                        fixes.append("Fixed missing '=' in variable assignment.")
+
+            # 6. Unmatched closing parenthesis
+            for i in range(len(lines)):
+                # Ignoring complex strings, simple check for unbalanced parens
+                open_p = lines[i].count('(')
+                close_p = lines[i].count(')')
+                if open_p > close_p:
+                    lines[i] = lines[i] + (')' * (open_p - close_p))
+                    if "Added missing closing parenthesis ')'." not in fixes:
+                        fixes.append("Added missing closing parenthesis ')'.")
+
+            # 7. Missing `self` in methods
             for i in range(len(lines)):
                 if re.match(r'^\s*def\s+\w+\(\s*\):', lines[i]):
                     lines[i] = lines[i].replace('():', '(self):')
                     if "Added 'self' parameter to empty class method definitions." not in fixes:
                         fixes.append("Added 'self' parameter to empty class method definitions.")
+
 
             # 6. Dynamic Auto-Indentation repair
             indent = 0
