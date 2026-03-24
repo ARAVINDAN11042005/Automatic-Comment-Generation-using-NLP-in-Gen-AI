@@ -1,8 +1,15 @@
 import re
+import os
+import json
+from openai import OpenAI
 
 class CodeFixerChatbot:
     def __init__(self):
-        pass
+        self.api_key = os.environ.get("OPENAI_API_KEY")
+        if self.api_key:
+            self.client = OpenAI(api_key=self.api_key)
+        else:
+            self.client = None
 
     def _auto_format(self, code, language):
         if language == 'python':
@@ -44,7 +51,50 @@ class CodeFixerChatbot:
 
     def fix_code(self, code, language):
         """
-        Simulates an intelligent code-fixing AI by resolving common syntax errors.
+        Fixes code using OpenAI ChatGPT if an API key is provided in OPENAI_API_KEY.
+        Otherwise falls back to the robust local simulated heuristic engine.
+        """
+        if self.client:
+            try:
+                system_prompt = "You are an expert programming assistant. You fix syntax errors, bugs, and formatting issues perfectly."
+                user_prompt = f"""
+The user has provided a snippet of {language} code that contains syntax errors, bugs, or formatting issues.
+Your task is to fix ALL errors, format it perfectly, and explain the changes you made.
+
+Return your response strictly in the following JSON format:
+{{
+    "fixed_code": "the corrected code here as a single string",
+    "fixes_applied": ["brief explanation 1", "brief explanation 2"]
+}}
+
+Here is the code:
+{code}
+"""
+                response = self.client.chat.completions.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    response_format={ "type": "json_object" },
+                    temperature=0.2
+                )
+                
+                result = json.loads(response.choices[0].message.content)
+                return {
+                    'original_code': code,
+                    'fixed_code': result.get('fixed_code', code),
+                    'fixes_applied': result.get('fixes_applied', ["Fixed code using ChatGPT"])
+                }
+            except Exception as e:
+                print(f"[!] OpenAI API failed: {e}. Falling back to default heuristics.")
+                return self._local_heuristic_fix(code, language)
+        else:
+            return self._local_heuristic_fix(code, language)
+
+    def _local_heuristic_fix(self, code, language):
+        """
+        Robust heuristic fallback code fixer.
         """
         fixes = []
         
