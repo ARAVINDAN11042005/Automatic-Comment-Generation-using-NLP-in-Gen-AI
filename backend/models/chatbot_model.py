@@ -140,17 +140,32 @@ Here is the code:
         if language == 'python':
             lines = fixed_code.split('\n')
             
-            # 1. Missing colons
+            # 1. Missing or Incorrect colons on control flow
             for i in range(len(lines)):
                 line = lines[i].rstrip()
                 if not line: continue
                 # Check control flow statements missing colons
-                if re.match(r'^\s*(def |class |if |for |while |try|except|else|elif |with ).*[^:]$', line):
-                    # exclude lines ending with comma or open parens
-                    if not line.endswith(',') and not line.endswith('(') and not line.endswith('\\'):
-                        lines[i] = line + ':'
-                        if "Added missing colon ':' to block statements." not in fixes:
-                            fixes.append("Added missing colon ':' to block statements.")
+                if re.match(r'^\s*(def |class |if |for |while |try|except|else|elif |with )', line):
+                    # Check if it wrongly ends with a semicolon, comma, dot, or hyphen instead of colon
+                    if re.search(r'[;,. \-]+$', line) and not line.endswith(':'):
+                        line = re.sub(r'[;,. \-]+$', ':', line)
+                        lines[i] = line
+                        if "Replaced incorrect trailing punctuation with colon ':' for block statement." not in fixes:
+                            fixes.append("Replaced incorrect trailing punctuation with colon ':' for block statement.")
+                    elif not line.endswith(':'):
+                        # exclude lines ending with open parens (multiline args)
+                        if not line.endswith('(') and not line.endswith('\\'):
+                            lines[i] = line + ':'
+                            if "Added missing colon ':' to block statements." not in fixes:
+                                fixes.append("Added missing colon ':' to block statements.")
+                                
+            # 1.5 Remove rogue semicolons from standard python statements
+            for i in range(len(lines)):
+                line = lines[i].rstrip()
+                if line.endswith(';') and not re.match(r'^\s*(for|while|if|def|class)', line):
+                    lines[i] = line[:-1]
+                    if "Removed unnecessary semicolon ';' from end of statement." not in fixes:
+                        fixes.append("Removed unnecessary semicolon ';' from end of statement.")
                             
             # 2. Typos true, false, null -> True, False, None
             for i in range(len(lines)):
