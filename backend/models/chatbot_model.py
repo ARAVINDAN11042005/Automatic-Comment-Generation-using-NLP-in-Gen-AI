@@ -56,28 +56,77 @@ class CodeFixerChatbot:
         fixed_code = code
 
         if language == 'python':
-            # Missing colons in def, if, for, while, elif, else
-            if re.search(r'(def\s+\w+\([^)]*\))\s*\n', fixed_code):
-                fixed_code = re.sub(r'(def\s+\w+\([^)]*\))\s*\n', r'\1:\n', fixed_code)
-                fixes.append("Added missing colon after function definition.")
-            
-            if re.search(r'(if|elif|while|for\s+.*\s+in\s+.*)[^:]\s*\n', fixed_code):
-                fixed_code = re.sub(r'((?:if|elif|while|for\s+.*\s+in\s+.*)[^:])\s*\n', r'\1:\n', fixed_code)
-                fixes.append("Added missing colons in control flow statements.")
-                
-            # print without parenthesis (Python 2 to 3)
-            if re.search(r'print\s+["\']', fixed_code):
-                fixed_code = re.sub(r'print\s+(["\'].*?["\'])', r'print(\1)', fixed_code)
-                fixes.append("Updated print statements to use parentheses (Python 3 syntax).")
-
-            # Basic indentation fix (very simplified)
             lines = fixed_code.split('\n')
-            for i in range(1, len(lines)):
-                if lines[i-1].strip().endswith(':'):
-                    if lines[i].strip() and not lines[i].startswith(' ') and not lines[i].startswith('\t'):
-                        lines[i] = '    ' + lines[i]
-                        if "Fixed missing indentation." not in fixes:
-                            fixes.append("Fixed missing indentation.")
+            
+            # 1. Missing colons
+            for i in range(len(lines)):
+                line = lines[i].rstrip()
+                if not line: continue
+                # Check control flow statements missing colons
+                if re.match(r'^\s*(def |class |if |for |while |try|except|else|elif |with ).*[^:]$', line):
+                    # exclude lines ending with comma or open parens
+                    if not line.endswith(',') and not line.endswith('(') and not line.endswith('\\'):
+                        lines[i] = line + ':'
+                        if "Added missing colon ':' to block statements." not in fixes:
+                            fixes.append("Added missing colon ':' to block statements.")
+                            
+            # 2. Typos true, false, null -> True, False, None
+            for i in range(len(lines)):
+                orig = lines[i]
+                lines[i] = re.sub(r'\btrue\b', 'True', lines[i])
+                lines[i] = re.sub(r'\bfalse\b', 'False', lines[i])
+                lines[i] = re.sub(r'\bnull\b', 'None', lines[i])
+                if orig != lines[i] and "Corrected casing for True/False/None." not in fixes:
+                    fixes.append("Corrected casing for True/False/None.")
+                    
+            # 3. print without parenthesis (Python 2 to 3)
+            for i in range(len(lines)):
+                orig = lines[i]
+                if re.search(r'^\s*print\s+([^(].*)$', lines[i]):
+                    lines[i] = re.sub(r'^(\s*print)\s+([^(].*)$', r'\1(\2)', lines[i])
+                    if orig != lines[i] and "Updated print statements to use parentheses (Python 3)." not in fixes:
+                        fixes.append("Updated print statements to use parentheses (Python 3).")
+                        
+            # 4. Assignment in conditional 'if x = 5:' -> 'if x == 5:'
+            for i in range(len(lines)):
+                if re.match(r'^\s*(if|elif|while)\s+', lines[i]):
+                    if ' = ' in lines[i] and ' == ' not in lines[i] and '!=' not in lines[i] and '>=' not in lines[i] and '<=' not in lines[i]:
+                        lines[i] = lines[i].replace(' = ', ' == ')
+                        if "Fixed assignment '=' used instead of equality '==' in conditional." not in fixes:
+                            fixes.append("Fixed assignment '=' used instead of equality '==' in conditional.")
+
+            # 5. Missing `self` in methods
+            for i in range(len(lines)):
+                if re.match(r'^\s*def\s+\w+\(\s*\):', lines[i]):
+                    lines[i] = lines[i].replace('():', '(self):')
+                    if "Added 'self' parameter to empty class method definitions." not in fixes:
+                        fixes.append("Added 'self' parameter to empty class method definitions.")
+
+            # 6. Dynamic Auto-Indentation repair
+            indent = 0
+            for i in range(len(lines)):
+                stripped = lines[i].strip()
+                if not stripped: continue
+                
+                # Outdent blocks
+                if re.match(r'^(except|else|elif|finally)', stripped):
+                    indent = max(0, indent - 1)
+                    
+                # Fix indentation if line has NO leading spaces but we expect some
+                # This corrects flat pasted code blocks automatically
+                if len(lines[i]) - len(stripped) == 0 and indent > 0:
+                    lines[i] = ('    ' * indent) + stripped
+                    if "Dynamically fixed missing indentation blocks." not in fixes:
+                        fixes.append("Dynamically fixed missing indentation blocks.")
+                else:
+                    # Sync indent tracker with user's actual spaces
+                    actual_indent = (len(lines[i]) - len(stripped)) // 4
+                    indent = max(indent, actual_indent)
+                
+                # Indent next lines if current line opens a block
+                if stripped.endswith(':'):
+                    indent += 1
+
             fixed_code = '\n'.join(lines)
 
         def fix_c_style_errors(code_str, fixes_list):
