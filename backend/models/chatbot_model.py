@@ -4,11 +4,55 @@ class CodeFixerChatbot:
     def __init__(self):
         pass
 
+    def _auto_format(self, code, language):
+        if language == 'python':
+            # Python is whitespace dependent; do basic splitting on common keywords if crammed
+            code = re.sub(r'(?<!^)(def |class |if |for |while |try:|except:|else:|elif )', r'\n\1', code)
+            return code
+            
+        # For JS and Java, perform curly-brace formatting
+        # 1. Ensure basic spacing
+        code = re.sub(r'{\s*', ' {\n', code)
+        code = re.sub(r'\s*}', '\n}', code)
+        
+        # safely handle semicolons outside 'for' loops
+        parts = re.split(r'(for\s*\([^)]+\))', code)
+        for i in range(len(parts)):
+            if not parts[i].strip().startswith('for'):
+                parts[i] = re.sub(r';\s*', ';\n', parts[i])
+        code = "".join(parts)
+
+        # 2. Fix indentation
+        lines = code.split('\n')
+        formatted = []
+        indent = 0
+        
+        for line in lines:
+            line = line.strip()
+            if not line:
+                continue
+            
+            if line.startswith('}'):
+                indent = max(0, indent - 1)
+                
+            formatted.append(('    ' * indent) + line)
+            
+            if line.endswith('{'):
+                indent += 1
+                
+        return '\n'.join(formatted)
+
     def fix_code(self, code, language):
         """
         Simulates an intelligent code-fixing AI by resolving common syntax errors.
         """
         fixes = []
+        
+        # Check if code is crammed into a single line (typical of copy-paste loss)
+        if '\n' not in code.strip() and len(code) > 50:
+            code = self._auto_format(code, language)
+            fixes.append("Auto-formatted single-line code into proper block structure.")
+            
         fixed_code = code
 
         if language == 'python':
