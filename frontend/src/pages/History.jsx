@@ -124,7 +124,7 @@ function History() {
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: i * 0.05 }}
                                 >
-                                    <td>{sub.id}</td>
+                                    <td>{i + 1}</td>
                                     <td>
                                         <div className="code-preview">{sub.code_input}</div>
                                     </td>
