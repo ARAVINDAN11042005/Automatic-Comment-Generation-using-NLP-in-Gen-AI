@@ -80,22 +80,37 @@ class CodeFixerChatbot:
                             fixes.append("Fixed missing indentation.")
             fixed_code = '\n'.join(lines)
 
-        elif language == 'javascript':
+        def fix_c_style_errors(code_str, fixes_list):
+            lines = code_str.split('\n')
+            for i in range(len(lines)):
+                line = lines[i].strip()
+                if not line: continue
+                
+                # Missing braces on control flow logic
+                if not line.endswith('{') and not line.endswith('}') and not line.endswith(';'):
+                    if re.match(r'^(if|for|while|else|catch)(\s|\()', line) or line == 'else':
+                        lines[i] = lines[i] + ' {'
+                        if "Added missing curly braces '{' to control statements." not in fixes_list:
+                            fixes_list.append("Added missing curly braces '{' to control statements.")
+                        continue
+                        
+                # Missing semicolons on standard expressions
+                if not line.endswith(';') and not line.endswith('{') and not line.endswith('}'):
+                    if not re.match(r'^(if|for|while|else|catch|class|public|private|protected|import)', line):
+                        if '=' in line or 'return ' in line or 'System.out' in line or 'console.' in line or '++' in line or '--' in line or 'let ' in line or 'const ' in line or 'var ' in line or 'add(' in line or "+=" in line or "-=" in line:
+                            lines[i] = lines[i] + ';'
+                            if "Added missing semicolons." not in fixes_list:
+                                fixes_list.append("Added missing semicolons.")
+                                
+            return '\n'.join(lines)
+
+        if language == 'javascript':
             # console.log typos
             if 'console.print' in fixed_code:
                 fixed_code = fixed_code.replace('console.print', 'console.log')
                 fixes.append("Corrected 'console.print' to 'console.log'.")
                 
-            # Missing semicolons on basic lines (lazy simulation)
-            lines = fixed_code.split('\n')
-            for i in range(len(lines)):
-                line = lines[i].strip()
-                if line and not line.endswith(';') and not line.endswith('{') and not line.endswith('}') and not line.endswith(','):
-                    if '=' in line or 'let ' in line or 'const ' in line or 'console.log' in line or 'return ' in line:
-                        lines[i] = lines[i] + ';'
-                        if "Added missing semicolons." not in fixes:
-                            fixes.append("Added missing semicolons.")
-            fixed_code = '\n'.join(lines)
+            fixed_code = fix_c_style_errors(fixed_code, fixes)
 
         elif language == 'java':
             # System.out.print typos
@@ -106,16 +121,7 @@ class CodeFixerChatbot:
                 fixed_code = fixed_code.replace('System.out.printLn', 'System.out.println')
                 fixes.append("Fixed capitalization of 'println'.")
                 
-            # Missing semicolons
-            lines = fixed_code.split('\n')
-            for i in range(len(lines)):
-                line = lines[i].strip()
-                if line and not line.endswith(';') and not line.endswith('{') and not line.endswith('}'):
-                    if 'System.out' in line or 'return ' in line or '=' in line or '++' in line or 'add(' in line:
-                        lines[i] = lines[i] + ';'
-                        if "Added missing semicolons." not in fixes:
-                            fixes.append("Added missing semicolons.")
-            fixed_code = '\n'.join(lines)
+            fixed_code = fix_c_style_errors(fixed_code, fixes)
 
         if not fixes:
             if code.strip():
