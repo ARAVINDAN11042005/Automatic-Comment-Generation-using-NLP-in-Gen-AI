@@ -554,6 +554,12 @@ class NLPCommentGenerator:
             explanation = self._analyze_single_line(line, language)
             
             if explanation:
+                if language in ('javascript', 'java'):
+                    if explanation.startswith('# '):
+                        explanation = '// ' + explanation[2:]
+                    elif explanation.startswith('#'):
+                        explanation = '//' + explanation[1:]
+                        
                 commented_lines.append(f'{indent}{explanation}')
                 analyzed_count += 1
             

@@ -173,7 +173,8 @@ class ALSICommentGenerator:
             
             # ALSI sometimes fails to generate a comment (~20% miss rate)
             if random.random() < 0.18:
-                commented_lines.append(f'{indent}# ...')
+                miss_comment = '// ...' if language in ('javascript', 'java') else '# ...'
+                commented_lines.append(f'{indent}{miss_comment}')
                 commented_lines.append(line)
                 analyzed_count += 1
                 continue
@@ -181,6 +182,11 @@ class ALSICommentGenerator:
             explanation = self._analyze_single_line(line, language)
             
             if explanation:
+                if language in ('javascript', 'java'):
+                    if explanation.startswith('# '):
+                        explanation = '// ' + explanation[2:]
+                    elif explanation.startswith('#'):
+                        explanation = '//' + explanation[1:]
                 commented_lines.append(f'{indent}{explanation}')
                 analyzed_count += 1
             
