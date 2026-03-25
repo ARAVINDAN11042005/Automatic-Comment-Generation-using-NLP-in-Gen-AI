@@ -181,15 +181,6 @@ function Generate() {
                                         <span className="metric-value">{(result.alsi.metrics.f1 * 100).toFixed(1)}%</span>
                                     </div>
                                 </div>
-                                <div className="comment-text" style={{ padding: '10px', marginTop: '12px' }}>
-                                    <SyntaxHighlighter
-                                        language={language}
-                                        style={vscDarkPlus}
-                                        customStyle={{ background: 'transparent', margin: 0, padding: 0, fontSize: '0.85rem' }}
-                                    >
-                                        {result.alsi.comment}
-                                    </SyntaxHighlighter>
-                                </div>
                             </motion.div>
 
                             {/* NLP Model Result (Full Width) */}

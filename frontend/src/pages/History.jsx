@@ -157,7 +157,7 @@ function History() {
                                             <button
                                                 className="btn btn-secondary btn-icon"
                                                 style={{ width: '32px', height: '32px' }}
-                                                onClick={() => setSelectedItem({ ...sub, displayIndex: idx + 1 })}
+                                                onClick={() => setSelectedItem(sub)}
                                                 title="View details"
                                             >
                                                 <HiEye />
@@ -205,7 +205,7 @@ function History() {
                             onClick={(e) => e.stopPropagation()}
                         >
                             <div className="card-header">
-                                <h3>Submission #{selectedItem.displayIndex}</h3>
+                                <h3>Submission #{selectedItem.id}</h3>
                                 <button
                                     className="btn btn-secondary btn-icon"
                                     onClick={() => setSelectedItem(null)}
@@ -250,15 +250,6 @@ function History() {
                                             <span className="metric-label">F1</span>
                                             <span className="metric-value">{(selectedItem.alsi_f1 * 100).toFixed(1)}%</span>
                                         </div>
-                                    </div>
-                                    <div className="comment-text" style={{ padding: '10px', marginTop: '12px' }}>
-                                        <SyntaxHighlighter
-                                            language={selectedItem.language}
-                                            style={vscDarkPlus}
-                                            customStyle={{ background: 'transparent', margin: 0, padding: 0, fontSize: '0.85rem' }}
-                                        >
-                                            {selectedItem.alsi_comment}
-                                        </SyntaxHighlighter>
                                     </div>
                                 </div>
 
