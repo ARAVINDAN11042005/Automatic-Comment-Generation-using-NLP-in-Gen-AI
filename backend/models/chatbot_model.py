@@ -91,12 +91,21 @@ You are an expert in:
    - Spring Boot, Maven, Gradle issues"""
                 user_prompt = f"""
 The user has provided a snippet of {language} code that contains syntax errors, bugs, or formatting issues.
-Your task is to fix ALL errors, format it perfectly, and explain the changes you made.
+Your task is to fix ALL errors, format it perfectly, and explain the changes you made following these EXACT steps:
+
+Step 1 — Identify the exact problem clearly in simple words.
+Step 2 — Explain why the error happened in 1-2 easy sentences.
+Step 3 — Give the complete corrected code.
+Step 4 — List exactly what you changed using bullet points.
+Step 5 — Give 1 tip to avoid the same mistake next time.
 
 Return your response strictly in the following JSON format:
 {{
-    "fixed_code": "the corrected code here as a single string",
-    "fixes_applied": ["brief explanation 1", "brief explanation 2"]
+    "problem": "Step 1 content",
+    "cause": "Step 2 content",
+    "fixed_code": "Step 3 content (full code as string)",
+    "changes": ["Change 1", "Change 2"],
+    "tip": "Step 5 content"
 }}
 
 Here is the code:
@@ -115,8 +124,11 @@ Here is the code:
                 result = json.loads(response.choices[0].message.content)
                 return {
                     'original_code': code,
+                    'problem': result.get('problem', 'Small syntax errors found.'),
+                    'cause': result.get('cause', 'The code had some missing elements or formatting issues.'),
                     'fixed_code': result.get('fixed_code', code),
-                    'fixes_applied': result.get('fixes_applied', ["Fixed code using ChatGPT"])
+                    'changes': result.get('changes', ["General fixes applied"]),
+                    'tip': result.get('tip', "Always check your syntax before running!")
                 }
             except Exception as e:
                 print(f"[!] OpenAI API failed: {e}. Falling back to default heuristics.")
@@ -299,6 +311,9 @@ Here is the code:
 
         return {
             'original_code': code,
+            'problem': 'Heuristic syntax issues detected.',
+            'cause': 'The code had minor syntax or indentation errors typical for this language.',
             'fixed_code': fixed_code,
-            'fixes_applied': fixes
+            'changes': fixes if fixes else ["Standard formatting fixes"],
+            'tip': f"Always double check your {language} syntax rules!"
         }

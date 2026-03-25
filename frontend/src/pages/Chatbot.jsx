@@ -150,26 +150,59 @@ function Chatbot() {
                             <h3>Fixed Code Results</h3>
                         </div>
 
+                        {/* Step 1 & 2: Identification and Cause */}
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '24px' }}>
+                            <div className="step-card">
+                                <h4 style={{ color: '#ff4d4d', marginBottom: '8px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <span style={{ background: '#ff4d4d22', padding: '4px 8px', borderRadius: '4px' }}>Step 1</span> Problem
+                                </h4>
+                                <p style={{ color: 'var(--text-primary)', fontSize: '0.85rem', lineHeight: '1.5' }}>{result.problem}</p>
+                            </div>
+                            <div className="step-card">
+                                <h4 style={{ color: '#ffae00', marginBottom: '8px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <span style={{ background: '#ffae0022', padding: '4px 8px', borderRadius: '4px' }}>Step 2</span> Why it happened
+                                </h4>
+                                <p style={{ color: 'var(--text-primary)', fontSize: '0.85rem', lineHeight: '1.5' }}>{result.cause}</p>
+                            </div>
+                        </div>
+
+                        {/* Step 3: Fixed Code */}
                         <div style={{ marginBottom: '24px' }}>
-                            <h4 style={{ color: 'var(--text-secondary)', marginBottom: '8px', fontSize: '0.9rem' }}>Changes Applied:</h4>
-                            <ul style={{ paddingLeft: '20px', color: 'var(--text-primary)', fontSize: '0.85rem' }}>
-                                {result.fixes_applied.map((fix, idx) => (
-                                    <li key={idx} style={{ marginBottom: '4px' }}>{fix}</li>
-                                ))}
-                            </ul>
+                            <h4 style={{ color: 'var(--accent-secondary)', marginBottom: '12px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <span style={{ background: 'var(--accent-secondary-transparent)', padding: '4px 8px', borderRadius: '4px' }}>Step 3</span> Complete Corrected Code
+                            </h4>
+                            <div className="comment-text" style={{ padding: '0', background: 'transparent' }}>
+                                <SyntaxHighlighter
+                                    language={language}
+                                    style={vscDarkPlus}
+                                    customStyle={{ borderRadius: '8px', margin: 0, padding: '16px', fontSize: '0.85rem' }}
+                                >
+                                    {result.fixed_code}
+                                </SyntaxHighlighter>
+                            </div>
                         </div>
 
-                        <div className="comment-text" style={{ padding: '0', background: 'transparent' }}>
-                            <SyntaxHighlighter
-                                language={language}
-                                style={vscDarkPlus}
-                                customStyle={{ borderRadius: '8px', margin: 0, padding: '16px', fontSize: '0.85rem' }}
-                            >
-                                {result.fixed_code}
-                            </SyntaxHighlighter>
+                        {/* Step 4 & 5: Changes and Tip */}
+                        <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '20px' }}>
+                            <div>
+                                <h4 style={{ color: 'var(--accent-primary)', marginBottom: '8px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <span style={{ background: 'var(--accent-primary-transparent)', padding: '4px 8px', borderRadius: '4px' }}>Step 4</span> Changes Applied
+                                </h4>
+                                <ul style={{ paddingLeft: '20px', color: 'var(--text-primary)', fontSize: '0.85rem' }}>
+                                    {result.changes.map((fix, idx) => (
+                                        <li key={idx} style={{ marginBottom: '4px' }}>{fix}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                            <div style={{ background: 'rgba(0, 212, 170, 0.05)', padding: '15px', borderRadius: '12px', border: '1px dashed var(--accent-primary)' }}>
+                                <h4 style={{ color: 'var(--accent-primary)', marginBottom: '8px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <HiSparkles /> <span style={{ background: 'var(--accent-primary-transparent)', padding: '4px 8px', borderRadius: '4px' }}>Step 5</span> Pro-Tip
+                                </h4>
+                                <p style={{ color: 'var(--text-primary)', fontSize: '0.85rem', fontStyle: 'italic', lineHeight: '1.5' }}>{result.tip}</p>
+                            </div>
                         </div>
 
-                        <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end' }}>
+                        <div style={{ marginTop: '30px', display: 'flex', justifyContent: 'flex-end' }}>
                             <button
                                 className="btn btn-primary"
                                 onClick={handleGenerateComments}
