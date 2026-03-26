@@ -2,9 +2,15 @@ import sqlite3
 import os
 from datetime import datetime, timezone, timedelta
 
-DB_PATH = os.path.join(os.path.dirname(__file__), 'comment_gen.db')
+# Use /tmp for SQLite on Vercel (read-only filesystem workaround)
+if os.environ.get('VERCEL'):
+    DB_PATH = '/tmp/comment_gen.db'
+else:
+    DB_PATH = os.path.join(os.path.dirname(__file__), 'comment_gen.db')
 
 def get_db():
+    # If on Vercel and DB doesn't exist in /tmp, we can't easily persist, 
+    # but we must ensure we don't crash. init_db() will handle creation.
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
