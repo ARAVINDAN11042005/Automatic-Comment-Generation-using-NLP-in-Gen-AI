@@ -7,8 +7,9 @@ import {
 } from 'recharts';
 import { HiChartBar, HiTrendingUp } from 'react-icons/hi';
 import axios from 'axios';
+import API_BASE_URL from '../api';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = API_BASE_URL;
 
 const COLORS = {
     nlp: '#6c63ff',

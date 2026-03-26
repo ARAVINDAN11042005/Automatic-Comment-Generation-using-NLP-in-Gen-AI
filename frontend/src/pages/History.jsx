@@ -4,8 +4,9 @@ import { HiClock, HiTrash, HiEye, HiX, HiRefresh } from 'react-icons/hi';
 import axios from 'axios';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import API_BASE_URL from '../api';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = API_BASE_URL;
 
 function History() {
     const [submissions, setSubmissions] = useState([]);
